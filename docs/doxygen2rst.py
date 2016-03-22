@@ -12,7 +12,7 @@ MAX_COLUMN = 80
 
 def is_valid_uuid(uuid_string):
     uuid4hex = re.compile('[0-9a-f]{32}\Z', re.I)
-    return uuid4hex.match(uuid_string) != None
+    return uuid4hex.match(uuid_string) is not None
 
 def get_page(refid):
     fields = refid.split("_")
@@ -233,7 +233,7 @@ class DoxyGen2RST(object):
 
     def _build_itemizedlist(self, node):
         retstr = LINE_BREAKER
-        if(node == None):
+        if(node is None):
             return ""
         for item in node:
             if(item.tag != "listitem"):
@@ -300,7 +300,7 @@ class DoxyGen2RST(object):
 
     def get_text(self, node):
         retstr = ""
-        if(node == None):
+        if(node is None):
             return ""
         for para in node:
             if(para.tag != "para"):
@@ -455,13 +455,13 @@ class DoxyGen2RST(object):
         detail_node = member.find("detaileddescription")
         brief_node = member.find("briefdescription")
         detail_txt = ""
-        if(detail_node == None and brief_node == None):
+        if(detail_node is None and brief_node is None):
             return None
 
         if(detail_node is not None):
             detail_txt = detail_node.findtext("para")
 
-        if(not detail_txt and brief_node != None):
+        if(not detail_txt and brief_node is not None):
             detail_txt = brief_node.findtext("para")
             detail_node = brief_node
 
