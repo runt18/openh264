@@ -37,7 +37,7 @@ def gen_args_type(args, member):
         ret = []
     ret.append("M m")
     for arg in range(0, args):
-        ret.append("A%d a%d"%(arg, arg))
+        ret.append("A{0:d} a{1:d}".format(arg, arg))
     return ", ".join(ret)
 
 def gen_args(args, member):
@@ -47,13 +47,13 @@ def gen_args(args, member):
         ret = []
     ret.append("m")
     for arg in range(0, args):
-        ret.append("a%d"%(arg))
+        ret.append("a{0:d}".format((arg)))
     return ", ".join(ret)
 
 def gen_args_(args):
     ret = []
     for arg in range(0, args):
-        ret.append("a%d_"%(arg))
+        ret.append("a{0:d}_".format((arg)))
     return ", ".join(ret)
 
 def gen_init(args, r = False, member = False):
@@ -67,7 +67,7 @@ def gen_init(args, r = False, member = False):
         ret.append("r_ (r)")
 
     for arg in range(0, args):
-        ret.append("a%d_ (a%d)"%(arg, arg))
+        ret.append("a{0:d}_ (a{1:d})".format(arg, arg))
     return ", ".join(ret)
 
 def gen_typenames(args, member):
@@ -78,7 +78,7 @@ def gen_typenames(args, member):
     ret.append("typename M")
 
     for arg in range(0, args):
-        ret.append("typename A%d"%(arg))
+        ret.append("typename A{0:d}".format((arg)))
     return ", ".join(ret)
 
 def gen_types(args, member):
@@ -88,29 +88,29 @@ def gen_types(args, member):
         ret = []
     ret.append("M")
     for arg in range(0, args):
-        ret.append("A%d"%(arg))
+        ret.append("A{0:d}".format((arg)))
     return ", ".join(ret)
 
 
 def generate_class_template(args, ret = False, member = True):
-    print "// %d arguments --"%args
+    print "// {0:d} arguments --".format(args)
     if member:
         nm = "m"
     else:
         nm = "nm"
 
     if not ret:
-        print "template<"+ gen_typenames(args, member) + "> class gmp_args_%s_%d : public gmp_args_base {"%(nm, args)
+        print "template<"+ gen_typenames(args, member) + "> class gmp_args_{0!s}_{1:d} : public gmp_args_base {{".format(nm, args)
     else:
-        print "template<"+ gen_typenames(args, member) + ", typename R> class gmp_args_%s_%d_ret : public gmp_args_base {"%(nm, args)
+        print "template<"+ gen_typenames(args, member) + ", typename R> class gmp_args_{0!s}_{1:d}_ret : public gmp_args_base {{".format(nm, args)
 
     print " public:"
 
     if not ret:
-        print "  gmp_args_%s_%d ("%(nm, args) + gen_args_type(args, member) + ") :"
+        print "  gmp_args_{0!s}_{1:d} (".format(nm, args) + gen_args_type(args, member) + ") :"
         print "    " + gen_init(args, False, member) + "  {}"
     else:
-        print "  gmp_args_%s_%d_ret ("%(nm, args) + gen_args_type(args, member) + ", R* r) :"
+        print "  gmp_args_{0!s}_{1:d}_ret (".format(nm, args) + gen_args_type(args, member) + ", R* r) :"
         print "    " + gen_init(args, True, member) + "  {}"
         print "  virtual bool returns_value() const {\n    return true;\n  }"
     print
@@ -132,7 +132,7 @@ def generate_class_template(args, ret = False, member = True):
     if ret:
         print "  R* r_;"
     for arg in range(0, args):
-        print "  A%d a%d_;"%(arg, arg)
+        print "  A{0:d} a{1:d}_;".format(arg, arg)
     print "};"
     print
     print
@@ -146,18 +146,18 @@ def generate_function_template(args, member):
         nm = "nm"
         NM = "NM";
 
-    print "// %d arguments --"%args
+    print "// {0:d} arguments --".format(args)
     print "template<" + gen_typenames(args, member) + ">"
-    print "gmp_args_%s_%d<"%(nm, args) + gen_types(args, member) + ">* WrapTask%s ("%NM + gen_args_type(args, member) + ") {"
-    print "  return new gmp_args_%s_%d<"%(nm, args) + gen_types(args, member) + ">"
+    print "gmp_args_{0!s}_{1:d}<".format(nm, args) + gen_types(args, member) + ">* WrapTask{0!s} (".format(NM) + gen_args_type(args, member) + ") {"
+    print "  return new gmp_args_{0!s}_{1:d}<".format(nm, args) + gen_types(args, member) + ">"
     print "    (" + gen_args(args, member) + ");"
     print "}"
     print
     if member:
         print "template<" + gen_typenames(args, member) + ">"
         print "GMPTask*"
-        print "WrapTaskRefCounted%s ("%NM + gen_args_type(args, member) + ") {"
-        print "  GMPTask *t = WrapTask%s ("%NM + gen_args(args, member) + ");"
+        print "WrapTaskRefCounted{0!s} (".format(NM) + gen_args_type(args, member) + ") {"
+        print "  GMPTask *t = WrapTask{0!s} (".format(NM) + gen_args(args, member) + ");"
         print "  return new RefCountTaskWrapper(t, o);"
         print "}"
         print
@@ -169,10 +169,10 @@ def generate_function_template_ret(args, member):
     else:
         nm = "nm"
         NM = "NM";
-    print "// %d arguments --"%args
+    print "// {0:d} arguments --".format(args)
     print "template<" + gen_typenames(args, member) + ", typename R>"
-    print "gmp_args_%s_%d_ret<"%(nm, args) + gen_types(args, member) + ", R>* WrapTask%sRet ("%NM + gen_args_type(args, member) + ", R* r) {"
-    print "  return new gmp_args_%s_%d_ret<"%(nm, args) + gen_types(args, member) + ", R>"
+    print "gmp_args_{0!s}_{1:d}_ret<".format(nm, args) + gen_types(args, member) + ", R>* WrapTask{0!s}Ret (".format(NM) + gen_args_type(args, member) + ", R* r) {"
+    print "  return new gmp_args_{0!s}_{1:d}_ret<".format(nm, args) + gen_types(args, member) + ", R>"
     print "    (" + gen_args(args, member) + ", r);"
     print "}"
     print

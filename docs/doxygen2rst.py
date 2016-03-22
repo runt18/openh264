@@ -140,7 +140,7 @@ class DoxyGen2RST(object):
             retstr = self._build_uml(m.groups()[1], m.groups()[2])
         elif(m.groups()[0] == "link"):
             link = m.groups()[1] + self.page_ext
-            retstr = ("`%s <%s>`_" % (m.groups()[2], link))
+            retstr = ("`{0!s} <{1!s}>`_".format(m.groups()[2], link))
         else:
             if(m.groups()[0] != "function"):
                 retstr +=  self._build_title(m.groups()[2])
@@ -188,7 +188,7 @@ class DoxyGen2RST(object):
         retstr += target + "_ "
         if target in self.page_references:
             reflink = self.page_references[target]
-            print("Link already added: %s == %s" % (reflink[0], node.attrib["refid"]))
+            print("Link already added: {0!s} == {1!s}".format(reflink[0], node.attrib["refid"]))
             assert(reflink[0] == node.attrib["refid"])
             pass
         else:
@@ -540,8 +540,8 @@ class DoxyGen2RST(object):
         return retstr
 
     def covert_item(self, compound, id, tag):
-        xml_path = os.path.join(self.doxy_output_dir, "%s.xml" % compound)
-        print("covert_item: id=%s, name=%s" % (id, xml_path))
+        xml_path = os.path.join(self.doxy_output_dir, "{0!s}.xml".format(compound))
+        print("covert_item: id={0!s}, name={1!s}".format(id, xml_path))
         obj_root = etree.parse(xml_path).getroot()
         retstr = ""
         compound = obj_root.find("compounddef")
@@ -576,8 +576,8 @@ class DoxyGen2RST(object):
         if(type == "function"):
             file, tag = get_page(ref_id)
             dst_kind = "file"
-        xml_path = os.path.join(self.doxy_output_dir, "%s.xml" % file)
-        print("convert_doxy: type=%s, name=%s" % (type, xml_path))
+        xml_path = os.path.join(self.doxy_output_dir, "{0!s}.xml".format(file))
+        print("convert_doxy: type={0!s}, name={1!s}".format(type, xml_path))
         obj_root = etree.parse(xml_path).getroot()
         compound = obj_root.find("compounddef")
         compound_kind = compound.attrib["kind"]

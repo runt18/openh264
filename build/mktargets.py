@@ -21,34 +21,34 @@ OUTFILE="targets.mk"
 CPP_SUFFIX=".cpp"
 
 def write_cpp_rule_pattern(f):
-    src = "$(%s_SRCDIR)/%%%s"%(PREFIX, CPP_SUFFIX)
-    dst = "$(%s_SRCDIR)/%%.$(OBJ)"%(PREFIX)
+    src = "$({0!s}_SRCDIR)/%{1!s}".format(PREFIX, CPP_SUFFIX)
+    dst = "$({0!s}_SRCDIR)/%.$(OBJ)".format((PREFIX))
 
-    f.write("%s: %s\n"%(dst, src))
+    f.write("{0!s}: {1!s}\n".format(dst, src))
     f.write('\t$(QUIET_CXX)$(CXX) $(CFLAGS) $(CXXFLAGS) $(INCLUDES) $(' + PREFIX + '_CFLAGS) $(' + PREFIX + '_INCLUDES) -c $(CXX_O) $<\n')
     f.write("\n")
 
 def write_c_rule_pattern(f):
-    src = "$(%s_SRCDIR)/%%.c"%(PREFIX)
-    dst = "$(%s_SRCDIR)/%%.$(OBJ)"%(PREFIX)
+    src = "$({0!s}_SRCDIR)/%.c".format((PREFIX))
+    dst = "$({0!s}_SRCDIR)/%.$(OBJ)".format((PREFIX))
 
-    f.write("%s: %s\n"%(dst, src))
+    f.write("{0!s}: {1!s}\n".format(dst, src))
     f.write('\t$(QUIET_CC)$(CC) $(CFLAGS) $(INCLUDES) $(' + PREFIX + '_CFLAGS) $(' + PREFIX + '_INCLUDES) -c $(CXX_O) $<\n')
     f.write("\n")
 
 def write_asm_rule_pattern(f):
-    src = "$(%s_SRCDIR)/%%.asm"%(PREFIX)
-    dst = "$(%s_SRCDIR)/%%.$(OBJ)"%(PREFIX)
+    src = "$({0!s}_SRCDIR)/%.asm".format((PREFIX))
+    dst = "$({0!s}_SRCDIR)/%.$(OBJ)".format((PREFIX))
 
-    f.write("%s: %s\n"%(dst, src))
+    f.write("{0!s}: {1!s}\n".format(dst, src))
     f.write('\t$(QUIET_ASM)$(ASM) $(ASMFLAGS) $(ASM_INCLUDES) $(' + PREFIX + '_ASMFLAGS) $(' + PREFIX + '_ASM_INCLUDES) -o $@ $<\n')
     f.write("\n")
 
 def write_asm_s_rule_pattern(f):
-    src = "$(%s_SRCDIR)/%%.S"%(PREFIX)
-    dst = "$(%s_SRCDIR)/%%.$(OBJ)"%(PREFIX)
+    src = "$({0!s}_SRCDIR)/%.S".format((PREFIX))
+    dst = "$({0!s}_SRCDIR)/%.$(OBJ)".format((PREFIX))
 
-    f.write("%s: %s\n"%(dst, src))
+    f.write("{0!s}: {1!s}\n".format(dst, src))
     f.write('\t$(QUIET_CCAS)$(CCAS) $(CCASFLAGS) $(ASMFLAGS) $(INCLUDES) $(' + PREFIX + '_CFLAGS) $(' + PREFIX + '_INCLUDES) -c -o $@ $<\n')
     f.write("\n")
 
@@ -100,7 +100,7 @@ OUTFILE = os.path.abspath(OUTFILE)
 try:
     os.chdir(args.directory)
 except OSError as e:
-    sys.stderr.write("Error changing directory to %s\n" % e.filename)
+    sys.stderr.write("Error changing directory to {0!s}\n".format(e.filename))
     sys.exit(1)
 
 (cpp, asm, cfiles, sfiles) = find_sources()
@@ -121,55 +121,55 @@ for file in sfiles:
 
 
 f = open(OUTFILE, "w")
-f.write("%s_SRCDIR=%s\n"%(PREFIX, args.directory))
+f.write("{0!s}_SRCDIR={1!s}\n".format(PREFIX, args.directory))
 
-f.write("%s_CPP_SRCS=\\\n"%(PREFIX))
+f.write("{0!s}_CPP_SRCS=\\\n".format((PREFIX)))
 for c in cpp:
-    f.write("\t$(%s_SRCDIR)/%s\\\n"%(PREFIX, c))
+    f.write("\t$({0!s}_SRCDIR)/{1!s}\\\n".format(PREFIX, c))
 f.write("\n")
-f.write("%s_OBJS += $(%s_CPP_SRCS:%s=.$(OBJ))\n\n"%(PREFIX, PREFIX, CPP_SUFFIX))
+f.write("{0!s}_OBJS += $({1!s}_CPP_SRCS:{2!s}=.$(OBJ))\n\n".format(PREFIX, PREFIX, CPP_SUFFIX))
 
 if len(cfiles) > 0:
-    f.write("%s_C_SRCS=\\\n"%(PREFIX))
+    f.write("{0!s}_C_SRCS=\\\n".format((PREFIX)))
     for cfile in cfiles:
-        f.write("\t$(%s_SRCDIR)/%s\\\n"%(PREFIX, cfile))
+        f.write("\t$({0!s}_SRCDIR)/{1!s}\\\n".format(PREFIX, cfile))
     f.write("\n")
-    f.write("%s_OBJS += $(%s_C_SRCS:.c=.$(OBJ))\n"%(PREFIX, PREFIX))
+    f.write("{0!s}_OBJS += $({1!s}_C_SRCS:.c=.$(OBJ))\n".format(PREFIX, PREFIX))
 
 if len(asm) > 0:
-    f.write("%s_ASM_SRCS=\\\n"%(PREFIX))
+    f.write("{0!s}_ASM_SRCS=\\\n".format((PREFIX)))
     for c in asm:
-        f.write("\t$(%s_SRCDIR)/%s\\\n"%(PREFIX, c))
+        f.write("\t$({0!s}_SRCDIR)/{1!s}\\\n".format(PREFIX, c))
     f.write("\n")
-    f.write("%s_OBJSASM += $(%s_ASM_SRCS:.asm=.$(OBJ))\n"%(PREFIX, PREFIX))
+    f.write("{0!s}_OBJSASM += $({1!s}_ASM_SRCS:.asm=.$(OBJ))\n".format(PREFIX, PREFIX))
     f.write("ifeq ($(ASM_ARCH), x86)\n")
-    f.write("%s_OBJS += $(%s_OBJSASM)\n"%(PREFIX,PREFIX))
+    f.write("{0!s}_OBJS += $({1!s}_OBJSASM)\n".format(PREFIX, PREFIX))
     f.write("endif\n")
-    f.write("OBJS += $(%s_OBJSASM)\n\n"%(PREFIX))
+    f.write("OBJS += $({0!s}_OBJSASM)\n\n".format((PREFIX)))
 
 if len(armfiles) > 0:
-    f.write("%s_ASM_ARM_SRCS=\\\n"%(PREFIX))
+    f.write("{0!s}_ASM_ARM_SRCS=\\\n".format((PREFIX)))
     for c in armfiles:
-        f.write("\t$(%s_SRCDIR)/%s\\\n"%(PREFIX, c))
+        f.write("\t$({0!s}_SRCDIR)/{1!s}\\\n".format(PREFIX, c))
     f.write("\n")
-    f.write("%s_OBJSARM += $(%s_ASM_ARM_SRCS:.S=.$(OBJ))\n"%(PREFIX, PREFIX))
+    f.write("{0!s}_OBJSARM += $({1!s}_ASM_ARM_SRCS:.S=.$(OBJ))\n".format(PREFIX, PREFIX))
     f.write("ifeq ($(ASM_ARCH), arm)\n")
-    f.write("%s_OBJS += $(%s_OBJSARM)\n"%(PREFIX,PREFIX))
+    f.write("{0!s}_OBJS += $({1!s}_OBJSARM)\n".format(PREFIX, PREFIX))
     f.write("endif\n")
-    f.write("OBJS += $(%s_OBJSARM)\n\n"%(PREFIX))
+    f.write("OBJS += $({0!s}_OBJSARM)\n\n".format((PREFIX)))
 
 if len(arm64files) > 0:
-    f.write("%s_ASM_ARM64_SRCS=\\\n"%(PREFIX))
+    f.write("{0!s}_ASM_ARM64_SRCS=\\\n".format((PREFIX)))
     for c in arm64files:
-        f.write("\t$(%s_SRCDIR)/%s\\\n"%(PREFIX, c))
+        f.write("\t$({0!s}_SRCDIR)/{1!s}\\\n".format(PREFIX, c))
     f.write("\n")
-    f.write("%s_OBJSARM64 += $(%s_ASM_ARM64_SRCS:.S=.$(OBJ))\n"%(PREFIX, PREFIX))
+    f.write("{0!s}_OBJSARM64 += $({1!s}_ASM_ARM64_SRCS:.S=.$(OBJ))\n".format(PREFIX, PREFIX))
     f.write("ifeq ($(ASM_ARCH), arm64)\n")
-    f.write("%s_OBJS += $(%s_OBJSARM64)\n"%(PREFIX,PREFIX))
+    f.write("{0!s}_OBJS += $({1!s}_OBJSARM64)\n".format(PREFIX, PREFIX))
     f.write("endif\n")
-    f.write("OBJS += $(%s_OBJSARM64)\n\n"%(PREFIX))
+    f.write("OBJS += $({0!s}_OBJSARM64)\n\n".format((PREFIX)))
 
-f.write("OBJS += $(%s_OBJS)\n\n"%(PREFIX))
+f.write("OBJS += $({0!s}_OBJS)\n\n".format((PREFIX)))
 write_cpp_rule_pattern(f)
 
 if len(cfiles) > 0:
@@ -182,17 +182,17 @@ if len(sfiles) > 0:
     write_asm_s_rule_pattern(f)
 
 if args.library is not None:
-    f.write("$(LIBPREFIX)%s.$(LIBSUFFIX): $(%s_OBJS)\n"%(args.library, PREFIX))
+    f.write("$(LIBPREFIX){0!s}.$(LIBSUFFIX): $({1!s}_OBJS)\n".format(args.library, PREFIX))
     f.write("\t$(QUIET)rm -f $@\n")
     f.write("\t$(QUIET_AR)$(AR) $(AR_OPTS) $+\n")
     f.write("\n")
-    f.write("libraries: $(LIBPREFIX)%s.$(LIBSUFFIX)\n"%args.library)
-    f.write("LIBRARIES += $(LIBPREFIX)%s.$(LIBSUFFIX)\n"%args.library)
+    f.write("libraries: $(LIBPREFIX){0!s}.$(LIBSUFFIX)\n".format(args.library))
+    f.write("LIBRARIES += $(LIBPREFIX){0!s}.$(LIBSUFFIX)\n".format(args.library))
 
 if args.binary is not None:
-    f.write("%s$(EXEEXT): $(%s_OBJS) $(%s_DEPS)\n"%(args.binary, PREFIX, PREFIX))
-    f.write("\t$(QUIET_CXX)$(CXX) $(CXX_LINK_O) $(%s_OBJS) $(%s_LDFLAGS) $(LDFLAGS)\n\n"%(PREFIX, PREFIX))
-    f.write("binaries: %s$(EXEEXT)\n"%args.binary)
-    f.write("BINARIES += %s$(EXEEXT)\n"%args.binary)
+    f.write("{0!s}$(EXEEXT): $({1!s}_OBJS) $({2!s}_DEPS)\n".format(args.binary, PREFIX, PREFIX))
+    f.write("\t$(QUIET_CXX)$(CXX) $(CXX_LINK_O) $({0!s}_OBJS) $({1!s}_LDFLAGS) $(LDFLAGS)\n\n".format(PREFIX, PREFIX))
+    f.write("binaries: {0!s}$(EXEEXT)\n".format(args.binary))
+    f.write("BINARIES += {0!s}$(EXEEXT)\n".format(args.binary))
 
 f.close()
